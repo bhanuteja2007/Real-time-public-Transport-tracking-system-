@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Punjab State Road Transport Corporation with Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* Global Styles & Animations */
+    :root {
+      --font-family-poppins-chat: 'Poppins', Arial, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8e44ad 100%);
+      min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('data:image/svg+xml,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="40" cy="40" r="6"/><circle cx="0" cy="40" r="3"/><circle cx="80" cy="40" r="3"/><circle cx="40" cy="0" r="3"/><circle cx="40" cy= "80" r="3"/></g></g></svg>');
+      animation: backgroundMove 20s ease-in-out infinite;
+      z-index: -1;
+    }
+    @keyframes backgroundMove { 0%, 100% { transform: translateX(0) translateY(0); } 25% { transform: translateX(-10px) translateY(-10px); } 50% { transform: translateX(10px) translateY(-5px); } 75% { transform: translateX(-5px) translateY(10px); } }
+    @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes lineGlow { from { box-shadow: 0 0 10px rgba(243, 156, 18, 0.5); } to { box-shadow: 0 0 20px rgba(231, 76, 60, 0.8), 0 0 30px rgba(243, 156, 18, 0.5); } }
+    @keyframes logoFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    @keyframes cardSlideUp { from { opacity: 0; transform: translateY(80px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes iconRotate { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(5deg) scale(1.05); } 50% { transform: rotate(0deg) scale(1); } 75% { transform: rotate(-5deg) scale(1.05); } }
+    @keyframes swapBounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-8px) rotate(180deg); } 60% { transform: translateY(-4px) rotate(360deg); } }
+    @keyframes fadeInOut { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+    
+    /* Top Navigation */
+    .top-nav {
+      display: flex; justify-content: flex-end; align-items: center;
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+      padding: 15px 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 1000;
+      animation: slideInDown 0.8s ease-out;
+    }
+    .top-nav a {
+      color: #2c3e50; text-decoration: none; font-weight: 700;
+      font-size: 16px; margin-left: 30px; padding: 10px 20px;
+      border-radius: 30px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .top-nav a:hover { color: #8e44ad; background: rgba(142, 68, 173, 0.1); transform: translateY(-2px); }
+    #google_translate_element { margin-left: 30px; }
+    .goog-te-gadget { font-size: 15px !important; color: #2c3e50 !important; background: none !important; border: none !important; }
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+
+    /* Main Content Wrapper */
+    .page-wrapper { max-width: 1300px; margin: 0 auto; padding: 40px; animation: fadeInUp 1s ease-out 0.2s both; }
+
+    /* Hero Section */
+    .hero-section { text-align: center; margin-bottom: 50px; }
+    .agency-title {
+      font-family: 'Poppins', sans-serif; font-size: 48px; font-weight: 900;
+      color: #fff; line-height: 1.15; margin-bottom: 40px;
+      text-shadow: 0 6px 20px rgba(0,0,0,0.4); position: relative;
+    }
+    .agency-title::after {
+      content: ''; position: absolute; bottom: -15px; left: 50%;
+      transform: translateX(-50%); width: 120px; height: 4px;
+      background: linear-gradient(90deg, #f39c12, #e74c3c, #f39c12);
+      border-radius: 2px; animation: lineGlow 2s ease-in-out infinite alternate;
+    }
+    .transport-logo {
+      width: 200px; height: 200px; border-radius: 50%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 10px rgba(255,255,255,0.1), inset 0 0 0 3px rgba(255,255,255,0.2);
+      margin: 10px auto 0; border: 8px solid rgba(255,255,255,0.9);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #8e44ad 70%, #9b59b6 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer; position: relative; overflow: hidden;
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+    .transport-logo:hover { transform: scale(1.1) rotate(10deg); }
+    .logo-bus-icon { font-size: 60px; color: white; margin-bottom: 12px; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); }
+    .logo-text { color: white; font-size: 26px; font-weight: 900; letter-spacing: 4px; text-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+
+    /* Section Styles */
+    .section-title {
+      text-align: center; font-family: 'Poppins', sans-serif; font-size: 36px;
+      font-weight: 800; color: #fff; margin-bottom: 40px;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .services-panel { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+    .service-card {
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+      border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.05);
+      padding: 40px 35px; width: 100%; max-width: 380px; text-align: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 2px solid rgba(255,255,255,0.3);
+      animation: cardSlideUp 0.8s ease-out both;
+    }
+    .service-card:nth-child(1) { animation-delay: 0.2s; }
+    .service-card:nth-child(2) { animation-delay: 0.4s; }
+    .service-card:nth-child(3) { animation-delay: 0.6s; }
+    .service-card:hover { transform: translateY(-15px) scale(1.03); }
+    .card-icon { width: 70px; height: 70px; margin: 0 auto 30px; display: block; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15)); transition: all 0.4s ease; animation: iconRotate 6s ease-in-out infinite; }
+    .service-card:hover .card-icon { transform: scale(1.15) rotate(10deg); }
+    .card-title { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 800; color: #2c3e50; margin-bottom: 30px; line-height: 1.3; transition: color 0.3s ease; }
+    .service-card:hover .card-title { color: #8e44ad; }
+
+    /* Form Elements */
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-select {
+      width: 100%; padding: 18px 25px; border-radius: 20px; font-size: 17px; font-weight: 600;
+      border: 2px solid rgba(233, 236, 239, 0.8); background: rgba(255, 255, 255, 0.9); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(10px);
+    }
+    .form-select:focus { outline: none; border-color: #8e44ad; box-shadow: 0 0 0 6px rgba(142, 68, 173, 0.1); transform: translateY(-3px) scale(1.02); }
+    .swap-icon { font-size: 28px; color: #8e44ad; margin: 15px 0; text-align: center; animation: swapBounce 2s ease-in-out infinite; }
+    .checkbox-group { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 16px;}
+    .help-text { font-size: 14px; margin-bottom: 20px; text-align: left; }
+    .help-text a { color: #3498db; text-decoration: none; font-weight: 700; transition: all 0.3s ease; }
+    .help-text a:hover { color: #2980b9; transform: translateY(-1px); }
+    .optional-text { text-align: center; color: #7f8c8d; font-style: italic; margin-bottom: 15px; animation: fadeInOut 3s ease-in-out infinite; }
+    .button-group { display: flex; gap: 15px; margin-top: 25px; }
+    .btn {
+      flex: 1; padding: 18px 25px; border: none; border-radius: 35px;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-transform: uppercase; letter-spacing: 1px; color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8e44ad 100%);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      position: relative; overflow: hidden;
+    }
+    .btn:hover { transform: translateY(-4px) scale(1.05); }
+    .btn-clear { background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #e74c3c 100%); }
+    .btn::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0; background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%; transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:active::before { width: 400px; height: 400px; }
+
+    /* Tracking Section */
+    .tracking-chat-container { display: flex; justify-content: center; margin-bottom: 60px; }
+    .gps-section { /* styling reused */ }
+    .gps-image-container { margin: 20px auto 30px; max-width: 150px; }
+    .gps-image { width: 100%; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.2); animation: iconRotate 6s ease-in-out infinite; }
+
+    /* App & QR Section */
+    .get-app-section {
+      background: rgba(0,0,0,0.1); border-radius: 30px;
+      padding: 40px; display: flex;
+      justify-content: center; align-items: center;
+      gap: 40px; flex-wrap: wrap;
+    }
+    .app-links-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;}
+    .app-link {
+      display: flex; align-items: center; text-decoration: none;
+      background: #000; color: #fff; padding: 12px 24px;
+      border-radius: 12px; border: 1px solid #444;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .app-link:hover { transform: translateY(-5px); background: #222; }
+    .app-link img { width: auto; height: 48px; margin: 0; }
+    .qr-container { text-align: center; color: #fff; font-weight: 600; }
+    .qr-container img { border-radius: 12px; background: #fff; padding: 5px; }
+
+    /* Modal Styles */
+    .result-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+      border-radius: 25px; padding: 30px; width: 90%; max-width: 950px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.2); opacity: 0; 
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 2000; max-height: 85vh; overflow-y: auto; visibility: hidden;
+    }
+    .result-modal.visible { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
+    .result-modal h2 { text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 24px; }
+    .result-modal table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+    .result-modal th, .result-modal td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .result-modal th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; font-weight: 700; font-size: 16px; }
+    .result-modal th:first-child { border-top-left-radius: 15px; }
+    .result-modal th:last-child { border-top-right-radius: 15px; }
+    .result-modal tbody tr:hover { background: rgba(142, 68, 173, 0.08); }
+    .result-modal .btn-close-modal {
+      padding: 15px 35px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #fff; border: none; border-radius: 30px; cursor: pointer;
+      transition: all 0.4s ease; display: block; margin: 0 auto;
+      font-size: 16px; font-weight: 700; text-transform: uppercase;
+      box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+    }
+    .result-modal .btn-close-modal:hover { transform: translateY(-3px); }
+
+    /* Floating Chatbot Widget Styles */
+    .chatbot-widget { position: fixed; bottom: 25px; right: 25px; z-index: 1100; }
+    .chat-window-container {
+      width: 350px; max-height: 500px;
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: translateY(20px) scale(0.95);
+      opacity: 0; visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .chatbot-widget.active .chat-window-container { transform: translateY(0) scale(1); opacity: 1; visibility: visible; }
+    .chat-header {
+      background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+      padding: 15px 20px; font-weight: 600; font-size: 18px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9f9f9;}
+    .chat-message { padding: 10px 15px; border-radius: 15px; max-width: 80%; line-height: 1.4; }
+    .user-message { background: #6c5ce7; color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+    .bot-message { background: #e5e5ea; color: #000; align-self: flex-start; border-bottom-left-radius: 5px;}
+    .chat-input { display: flex; padding: 10px; border-top: 1px solid #eee; }
+    .chat-input textarea { flex-grow: 1; border: none; padding: 10px; resize: none; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; }
+    .chat-input button { background: #6c5ce7; color: #fff; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .chatbot-toggle {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+      color: #fff; border-radius: 50%; border: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin-left: auto; margin-top: 15px;
+      transform: scale(1); transition: transform 0.3s ease;
+    }
+    .chatbot-toggle:hover { transform: scale(1.1); }
+    .chatbot-widget.active .chatbot-toggle { transform: scale(0.9); }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-wrapper { padding: 20px; }
+      .agency-title { font-size: 36px; }
+      .section-title { font-size: 28px; }
+      .top-nav { padding: 10px 20px; }
+      .top-nav a { margin-left: 10px; font-size: 14px; }
+      .service-card { max-width: 100%; }
+      .get-app-section { padding: 30px; }
+      .chat-window-container { width: calc(100vw - 40px); max-height: 70vh; }
+      .chatbot-widget { bottom: 15px; right: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <a href="#">📧 Contact Us</a>
+    <a href="#">👤 About Us</a>
+    <div id="google_translate_element"></div>
+  </div>
+
+  <div class="page-wrapper">
+    
+    <section class="hero-section">
+      <div class="agency-title">Punjab State<br />Road Transport Corporation</div>
+      <div class="transport-logo">
+        <div class="logo-bus-icon">🚌</div>
+        <div class="logo-text">PSRTC</div>
+      </div>
+    </section>
+    
+    <section>
+        <h2 class="section-title">Plan Your Journey</h2>
+        <div class="services-panel">
+          <div class="service-card">
+            <img src="https://img.icons8.com/external-justicon-flat-justicon/64/external-bus-transportation-justicon-flat-justicon-1.png" alt="Route Search" class="card-icon" />
+            <h3 class="card-title">Search for Buses Between Two Locations</h3>
+            <form id="destinationSearchForm">
+              <div class="form-group"><select class="form-select" id="fromLocationSelect" required><option value="">From Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritsar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="swap-icon">⇅</div>
+              <div class="form-group"><select class="form-select" id="toLocationSelect" required><option value="">To Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritsar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="form-group"><select class="form-select"><option value="">Select Service (Any)</option><option value="express">Express Service</option><option value="local">Local Service</option><option value="deluxe">Deluxe Service</option><option value="ac">AC Service</option><option value="ordinary">Ordinary Service</option><option value="super-express">Super Express</option></select></div>
+              <div class="button-group"><button type="submit" class="btn btn-search">Search</button><button type="reset" class="btn btn-clear">Clear</button></div>
+            </form>
+          </div>
+          <div class="service-card">
+            <img src="https://img.icons8.com/color/64/bus.png" alt="Service Search" class="card-icon" />
+            <h3 class="card-title">Search By Service Number</h3>
+             <form id="serviceSearchForm">
+              <div class="checkbox-group"><label><input type="radio" name="searchType" value="service" checked />By Service No.</label><label><input type="radio" name="searchType" value="vehicle" />By Vehicle No.</label></div>
+              <div class="form-group"><select class="form-select" id="serviceNumberSelect" required><option value="">Search your Service No.*</option><option value="PB01-001">PB01-001 (Chandigarh-Ludhiana)</option><option value="PB01-002">PB01-002 (Ludhiana-Amritsar)</option><option value="PB01-003">PB01-003 (Amritar-Jalandhar)</option><option value="PB01-004">PB01-004 (Jalandhar-Patiala)</option><option value="PB01-005">PB01-005 (Patiala-Bathinda)</option><option value="PB01-006">PB01-006 (Bathinda-Chandigarh)</option><option value="PB01-007">PB01-007 (Mohali-Hoshiarpur)</option><option value="PB01-008">PB01-008 (Pathankot-Gurdaspur)</option></select></div>
+              <div class="help-text"><a href="#">Don't know what is service number?</a></div>
+              <div class="button-group" style="margin-top: 88px;"><button type="submit" class="btn btn-search">Search</button><button type="reset" class="btn btn-clear">Clear</button></div>
+            </form>
+          </div>
+          <div class="service-card">
+            <img src="https://img.icons8.com/fluency/64/overtime.png" alt="Timetable" class="card-icon" />
+            <h3 class="card-title">Service Time Table</h3>
+            <form id="timetableSearchForm">
+              <div class="form-group"><select class="form-select" id="timetableFrom" required><option value="">From Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritsar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="swap-icon">⇅</div>
+              <div class="form-group"><select class="form-select" id="timetableTo" required><option value="">To Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritsar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="optional-text">[Optional]</div>
+              <div class="form-group"><select class="form-select" id="timetableDepot"><option value="">Select Depot</option><option value="chandigarh central depot">Chandigarh Central Depot</option><option value="ludhiana north depot">Ludhiana North Depot</option><option value="amritsar main depot">Amritsar Main Depot</option><option value="jalandhar east depot">Jalandhar East Depot</option><option value="patiala south depot">Patiala South Depot</option><option value="bathinda west depot">Bathinda West Depot</option><option value="mohali phase-7 depot">Mohali Phase-7 Depot</option><option value="hoshiarpur city depot">Hoshiarpur City Depot</option><option value="pathankot central depot">Pathankot Central Depot</option><option value="gurdaspur main depot">Gurdaspur Main Depot</option></select></div>
+              <div class="button-group"><button type="submit" class="btn btn-search">Search</button><button type="reset" class="btn btn-clear">Clear</button></div>
+            </form>
+          </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Live Assistance & Tracking</h2>
+        <div class="tracking-chat-container">
+          <div class="gps-section service-card">
+            <div class="gps-image-container">
+              <img src="https://img.icons8.com/external-flat-design-circle-icons-maxicons/65/external-gps-gps-and-maps-flat-design-circle-icons-maxicons.png" alt="GPS Image" class="gps-image" />
+            </div>
+            <h3 class="card-title">Live Bus Tracking</h3>
+            <form id="busSearchForm">
+              <div class="form-group"><select class="form-select" id="fromStation" required><option value="">From Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="form-group"><select class="form-select" id="toStation" required><option value="">To Station*</option><option value="chandigarh">Chandigarh</option><option value="ludhiana">Ludhiana</option><option value="amritsar">Amritar</option><option value="jalandhar">Jalandhar</option><option value="patiala">Patiala</option><option value="bathinda">Bathinda</option><option value="mohali">Mohali</option><option value="hoshiarpur">Hoshiarpur</option><option value="pathankot">Pathankot</option><option value="gurdaspur">Gurdaspur</option></select></div>
+              <div class="button-group"><button type="submit" class="btn btn-search">Find Bus on Map</button></div>
+            </form>
+          </div>
+        </div>
+    </section>
+
+    <section class="get-app-section">
+      <div class="app-links-container">
+          <a href="#" class="app-link"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play"/></a>
+          <a href="#" class="app-link"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store"/></a>
+      </div>
+      <div class="qr-container">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://example.com" alt="QR Code" /><br>
+          Scan to Download
+      </div>
+    </section>
+  </div>
+
+  <div class="result-modal" id="resultModal">
+    <h2>Bus Details</h2>
+    <table id="resultTable">
+      <thead><tr><th>Service Number</th><th>Bus Number</th><th>Route</th><th>Status</th><th>Next Stop / Time</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="closeModal()" class="btn-close-modal">Close</button>
+  </div>
+  
+  <div class="chatbot-widget" id="chatbotWidget">
+    <div class="chat-window-container">
+      <div class="chat-header">PSRTC Assistant</div>
+      <main class="chat-messages" id="chat-messages"></main>
+      <form class="chat-input" id="chat-form">
+        <textarea id="chat-input" placeholder="Ask a question..." required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+    <button class="chatbot-toggle" id="chatbotToggle"><span>💬</span></button>
+  </div>
+
+  <script>
+    // --- JavaScript with correct Timetable and UI logic ---
+
+    const appData = {
+        buses: [
+            {serviceNumber:"PB01-001", busNumber:"PB-04-EF-2222", route:"Chandigarh → Ludhiana", status:"Active", nextStop:"Ludhiana at 09:45 AM"},
+            {serviceNumber:"PB01-002", busNumber:"PB-01-AB-1234", route:"Ludhiana → Amritsar", status:"Active", nextStop:"Amritsar at 10:30 AM"},
+            {serviceNumber:"PB01-003", busNumber:"PB-07-IJ-5555", route:"Amritsar → Jalandhar", status:"Active", nextStop:"Jalandhar at 12:15 PM"},
+            {serviceNumber:"PB01-004", busNumber:"PB-03-CD-1111", route:"Jalandhar → Patiala", status:"Active", nextStop:"Patiala at 12:00 PM"},
+            {serviceNumber:"PB01-005", busNumber:"PB-05-GH-3333", route:"Patiala → Bathinda", status:"Active", nextStop:"Bathinda at 10:15 AM"},
+            {serviceNumber:"PB01-006", busNumber:"PB-08-KL-6666", route:"Bathinda → Chandigarh", status:"Active", nextStop:"Chandigarh at 11:30 AM"},
+            {serviceNumber:"PB01-007", busNumber:"PB-09-MN-7777", route:"Mohali → Hoshiarpur", status:"Active", nextStop:"Hoshiarpur at 1:00 PM"},
+            {serviceNumber:"PB01-008", busNumber:"PB-10-OP-8888", route:"Pathankot → Gurdaspur", status:"Active", nextStop:"Gurdaspur at 2:30 PM"},
+        ],
+        timetables: {
+          "chandigarh-ludhiana": [
+            {time:"07:00 AM", depot:"Chandigarh Central Depot", service:"Express"},
+            {time:"09:30 AM", depot:"Ludhiana North Depot", service:"Ordinary"},
+            {time:"11:45 AM", depot:"Chandigarh Central Depot", service:"AC Service"}
+          ],
+          "ludhiana-chandigarh": [
+            {time:"06:00 AM", depot:"Ludhiana North Depot", service:"Express"},
+            {time:"08:30 AM", depot:"Chandigarh Central Depot", service:"Ordinary"},
+            {time:"10:45 AM", depot:"Ludhiana North Depot", service:"AC Service"}
+          ],
+          "amritsar-jalandhar": [
+            {time:"08:00 AM", depot:"Amritar Main Depot", service:"Deluxe"},
+            {time:"10:15 AM", depot:"Jalandhar East Depot", service:"Ordinary"},
+            {time:"01:30 PM", depot:"Amritar Main Depot", service:"Super Express"}
+          ],
+          "jalandhar-amritsar": [
+            {time:"09:00 AM", depot:"Jalandhar East Depot", service:"Deluxe"},
+            {time:"11:15 AM", depot:"Amritar Main Depot", service:"Ordinary"},
+            {time:"02:30 PM", depot:"Jalandhar East Depot", service:"Super Express"}
+          ],
+          "patiala-bathinda": [
+            {time:"07:30 AM", depot:"Patiala South Depot", service:"Express"},
+            {time:"12:00 PM", depot:"Bathinda West Depot", service:"Ordinary"}
+          ],
+          "bathinda-patiala": [
+            {time:"08:00 AM", depot:"Bathinda West Depot", service:"Express"},
+            {time:"01:00 PM", depot:"Patiala South Depot", service:"Ordinary"}
+          ],
+          "mohali-hoshiarpur": [
+            {time:"09:00 AM", depot:"Mohali Phase-7 Depot", service:"Local"},
+            {time:"03:00 PM", depot:"Hoshiarpur City Depot", service:"Local"}
+          ],
+          "hoshiarpur-mohali": [
+            {time:"10:00 AM", depot:"Hoshiarpur City Depot", service:"Local"},
+            {time:"04:00 PM", depot:"Mohali Phase-7 Depot", service:"Local"}
+          ],
+          "pathankot-gurdaspur": [
+            {time:"11:00 AM", depot:"Pathankot Central Depot", service:"Ordinary"}
+          ],
+          "gurdaspur-pathankot": [
+            {time:"12:00 PM", depot:"Gurdaspur Main Depot", service:"Ordinary"}
+          ],
+        },
+        stationCoords: {
+            chandigarh: { lat: 30.7333, lng: 76.7794 },
+            ludhiana: { lat: 30.9010, lng: 75.8573 },
+            amritsar: { lat: 31.6340, lng: 74.8723 },
+            jalandhar: { lat: 31.3260, lng: 75.5762 },
+            patiala: { lat: 30.3398, lng: 76.3869 },
+            bathinda: { lat: 30.2100, lng: 74.9455 },
+            mohali: { lat: 30.7046, lng: 76.7179 },
+            hoshiarpur: { lat: 31.5456, lng: 75.9119 },
+            pathankot: { lat: 32.2734, lng: 75.6520 },
+            gurdaspur: { lat: 32.0377, lng: 75.4059 }
+        }
+    };
+
+    function capitalize(s) {
+      if (typeof s !== 'string') return s;
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function renderResults(filteredData, type) {
+        const modal = document.getElementById('resultModal');
+        const tbody = document.querySelector("#resultTable tbody");
+        tbody.innerHTML = '';
+        if (type === 'bus') {
+            modal.querySelector('h2').textContent = 'Bus Details';
+            const tableHeaders = modal.querySelector('thead tr');
+            tableHeaders.innerHTML = `<th>Service Number</th><th>Bus Number</th><th>Route</th><th>Status</th><th>Next Stop / Time</th>`;
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="font-weight: 600;">No buses found for your query.</td></tr>`;
+            } else {
+                filteredData.forEach(b => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${b.serviceNumber}</td><td>${b.busNumber}</td><td>${b.route}</td><td>${b.status}</td><td>${b.nextStop}</td>`;
+                    tbody.appendChild(tr);
+                });
+            }
+        } else if (type === 'timetable') {
+            modal.querySelector('h2').textContent = 'Service Timetable';
+            const tableHeaders = modal.querySelector('thead tr');
+            tableHeaders.innerHTML = `<th>Time</th><th>Route</th><th>Depot</th><th>Service Type</th>`;
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="font-weight: 600;">No timetable found for this route.</td></tr>`;
+            } else {
+                filteredData.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${t.time}</td><td>${t.route}</td><td>${t.depot}</td><td>${t.service}</td>`;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+        modal.classList.add('visible');
+    }
+
+    function closeModal() {
+        document.getElementById('resultModal').classList.remove('visible');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Destination search
+        document.getElementById('destinationSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const from = document.getElementById('fromLocationSelect').value.trim().toLowerCase();
+            const to = document.getElementById('toLocationSelect').value.trim().toLowerCase();
+            if (!from || !to) { alert('Please select both "From" and "To" locations.'); return; }
+            const filtered = appData.buses.filter(b => {
+                const [start, end] = b.route.toLowerCase().split(' → ');
+                return start.includes(from) && end.includes(to);
+            });
+            renderResults(filtered, 'bus');
+        });
+
+        // Service search
+        document.getElementById('serviceSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const service = document.getElementById('serviceNumberSelect').value.trim();
+            if (!service) { alert('Please select a Service Number.'); return; }
+            const filtered = appData.buses.filter(b => b.serviceNumber === service);
+            renderResults(filtered, 'bus');
+        });
+
+        // Timetable search (corrected version)
+        document.getElementById('timetableSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const from = document.getElementById('timetableFrom').value.trim().toLowerCase();
+            const to = document.getElementById('timetableTo').value.trim().toLowerCase();
+            const depotValue = document.getElementById('timetableDepot').value.trim().toLowerCase();
+
+            if (!from || !to) {
+                alert('Please select both "From" and "To" stations for the timetable.');
+                return;
+            }
+
+            const routeKey = `${from}-${to}`;
+            let timetableData = appData.timetables[routeKey] || [];
+
+            const routeDisplay = `${capitalize(from)} → ${capitalize(to)}`;
+
+            if (depotValue) {
+                timetableData = timetableData.filter(item => {
+                    return item.depot.toLowerCase().trim() === depotValue;
+                });
+            }
+
+            const resultData = timetableData.map(item => ({
+                time: item.time,
+                route: routeDisplay,
+                depot: item.depot,
+                service: item.service
+            }));
+
+            renderResults(resultData, 'timetable');
+        });
+
+        document.getElementById('busSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const from = this.querySelector('#fromStation').value;
+            const to = this.querySelector('#toStation').value;
+            if (!from || !to) { alert('Please select both From and To stations to track a bus.'); return; }
+            const fromCoords = appData.stationCoords[from];
+            const toCoords = appData.stationCoords[to];
+            if (!fromCoords || !toCoords) { alert('Invalid station coordinates.'); return; }
+            const url = `https://www.google.com/maps/dir/?api=1&origin=${fromCoords.lat},${fromCoords.lng}&destination=${toCoords.lat},${toCoords.lng}`;
+            window.open(url, '_blank');
+        });
+
+        document.querySelectorAll('.btn-clear').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = this.closest('form');
+                if(form) {
+                    form.reset();
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                // Ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                ripple.style.cssText = `position: absolute; width: ${size}px; height: ${size}px; left: ${x}px; top: ${y}px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; transform: scale(0); animation: ripple 0.6s ease-out; pointer-events: none;`;
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        const chatbotWidget = document.getElementById('chatbotWidget');
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWidget.classList.toggle('active');
+            if (chatbotWidget.classList.contains('active')) chatInput.focus();
+        });
+
+        function appendMessage(message, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('chat-message', sender === 'user' ? 'user-message' : 'bot-message');
+            msgDiv.textContent = message;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(userMessage) {
+            const lowerMsg = userMessage.toLowerCase();
+            if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) return "Hello! How can I help you with Punjab transport today?";
+            if (lowerMsg.includes('bus')) return "You can find bus schedules and routes on our website or ask for specific locations.";
+            if (lowerMsg.includes('help')) return "I'm here to assist you with transport info and queries.";
+            return "Sorry, I didn't understand that. Can you please rephrase?";
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+            appendMessage(userMessage, 'user');
+            chatInput.value = '';
+            setTimeout(() => {
+                appendMessage(getBotResponse(userMessage), 'bot');
+            }, 800);
+        });
+
+        appendMessage("Welcome to PSRTC Support! How can I assist you?", "bot");
+    });
+
+    function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element'); }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
